@@ -1,2 +1,11 @@
+# Ignore semua isi
 *
+
+# Jangan ignore folder
+!*/
+
+# Simpan file .gitignore
 !.gitignore
+
+# Simpan file .gitkeep
+!.gitkeep

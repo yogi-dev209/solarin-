@@ -13,6 +13,15 @@ use App\Models\User;
 
 class ProfileController extends Controller
 {
+
+    public function show()
+    {
+        /** @var User $user */
+        $user = Auth::user();
+        $vehicle = Vehicle::where('user_id', $user->id)->first();
+
+        return view('sopir.profil', compact('user', 'vehicle'));
+    }
     public function update(Request $request)
     {
         /** @var User $user */
@@ -25,11 +34,11 @@ class ProfileController extends Controller
             'phone'            => ['required', 'string', 'max:20'],
             'address'          => ['nullable', 'string'],
             'operational_area' => ['nullable', 'string', 'max:255'], // Area operasional ditambahkan
-            'photo'            => ['nullable', 'image', 'mimes:jpeg,png,jpg', 'max:5120'], 
-            
+            'photo'            => ['nullable', 'image', 'mimes:jpeg,png,jpg', 'max:5120'],
+
             'old_password'     => ['nullable', 'string'],
             'password'         => ['nullable', 'string', 'min:6', 'confirmed'],
-            
+
             // Kendaraan boleh kosong
             'plate_number'     => ['nullable', 'string', 'max:255'],
             'door_number'      => ['nullable', 'string', 'max:255'],
@@ -63,16 +72,16 @@ class ProfileController extends Controller
         $user->phone            = $request->phone;
         $user->address          = $request->address;
         $user->operational_area = $request->operational_area;
-        
+
         if ($request->has('theme')) $user->theme = $request->theme;
         if ($request->has('language')) $user->language = $request->language;
-        
+
         $user->save();
 
         // 5. Update / Buat Kendaraan Baru
         // Jika sopir mengisi No. Polisi & Pintu, baru kita simpan kendaraannya
         if ($request->filled('plate_number') && $request->filled('door_number')) {
-            
+
             if ($request->filled('vehicle_id')) {
                 // Jika sebelumnya sudah punya kendaraan -> UPDATE
                 $vehicle = Vehicle::where('id', $request->vehicle_id)->where('user_id', $user->id)->first();
